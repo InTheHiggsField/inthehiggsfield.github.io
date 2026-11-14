@@ -1,0 +1,25 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+}
+const { eyebrow, title } = Astro.props;
+---
+
+<header class="page-header container">
+  <p class="section-label">{eyebrow}</p>
+  <h1><span class="glitch neon" data-text={title}>{title}</span></h1>
+  <div class="page-header__intro"><slot /></div>
+</header>
+
+<style>
+  .page-header {
+    padding-top: clamp(40px, 8vw, 88px);
+    padding-bottom: 32px;
+  }
+  .page-header__intro {
+    max-width: 62ch;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+</style>

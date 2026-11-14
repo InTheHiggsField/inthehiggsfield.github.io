@@ -1,0 +1,40 @@
+---
+interface Props {
+  step: string;
+}
+const { step } = Astro.props;
+---
+
+<section class="container">
+  <div class="panel uc">
+    <p class="uc__status"><span class="uc__blip" aria-hidden="true"></span> SECTOR OFFLINE</p>
+    <p class="uc__text">This page is being built in <strong>{step}</strong> of the plan.</p>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .uc__status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.18em;
+    color: var(--neon-yellow);
+  }
+  .uc__blip {
+    width: 10px;
+    height: 10px;
+    background: var(--neon-yellow);
+    box-shadow: 0 0 10px var(--neon-yellow);
+    animation: blip 1.2s steps(1) infinite;
+  }
+  @keyframes blip {
+    50% { opacity: 0.2; }
+  }
+  .uc__text {
+    margin: 0;
+    color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer">
+    <p class="footer__line">
+      <span class="footer__prompt">&gt;</span> &copy; {year} Johnathan Shirley{' '}
+      <span class="footer__sep">//</span> built with Astro, hosted on GitHub Pages
+    </p>
+    <ul class="footer__links">
+      <li><a href="https://github.com/InTheHiggsField" rel="me noopener">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/johnathan-shirley-04518b359" rel="me noopener">LinkedIn</a></li>
+      <li><a href="/Johnathan_Shirley_Resume.pdf">Resume</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 96px;
+    border-top: 1px solid rgba(0, 240, 255, 0.18);
+    background: rgba(7, 5, 13, 0.6);
+  }
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px 24px;
+    padding-block: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  .footer__line {
+    margin: 0;
+  }
+  .footer__prompt,
+  .footer__sep {
+    color: var(--neon-magenta);
+  }
+  .footer__links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+</style>

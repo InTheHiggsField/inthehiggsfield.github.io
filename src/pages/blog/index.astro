@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+const posts = (await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+
+<Base title="Blog" description="Personal essays by Johnathan Shirley.">
+  <PageHeader eyebrow="02 // transmissions" title="Blog">
+    <p>Personal essays. Long-form, occasionally unhinged, always honest.</p>
+  </PageHeader>
+  <section class="container">
+    <ol class="posts">
+      {
+        posts.map((p) => (
+          <li>
+            <a class="post panel" href={`/blog/${p.id}/`}>
+              <time datetime={p.data.pubDate.toISOString()} class="post__date">{fmt(p.data.pubDate)}</time>
+              <h2 class="post__title">{p.data.title}</h2>
+              <p class="post__desc">{p.data.description}</p>
+              <span class="post__tags">
+                {p.data.tags.map((t) => <span class="tag">{t}</span>)}
+                {p.data.draft && <span class="tag tag--yellow">draft</span>}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+  }
+  .post {
+    display: block;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .post:hover {
+    border-color: var(--neon-cyan);
+    transform: translateX(4px);
+    color: var(--text);
+    text-shadow: none;
+  }
+  .post__date {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--neon-magenta);
+  }
+  .post__title {
+    margin: 4px 0 6px;
+    font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+  }
+  .post__desc {
+    margin: 0 0 12px;
+    color: var(--text-muted);
+  }
+  .post__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>

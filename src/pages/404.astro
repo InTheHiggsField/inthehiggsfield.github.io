@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="404">
+  <section class="container lost">
+    <p class="section-label">error // route not found</p>
+    <h1><span class="glitch neon" data-text="404">404</span></h1>
+    <p class="lost__text">This node doesn't exist, or it's been wiped. Head back to safety.</p>
+    <a class="btn" href="/">Return home</a>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    padding-top: clamp(64px, 14vw, 160px);
+    text-align: center;
+  }
+  .lost h1 {
+    font-size: clamp(5rem, 22vw, 11rem);
+  }
+  .lost .section-label::after {
+    display: none;
+  }
+  .lost .section-label {
+    justify-content: center;
+  }
+  .lost__text {
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+</style>

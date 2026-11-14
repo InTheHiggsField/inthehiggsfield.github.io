@@ -1,0 +1,220 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Terminal from '../components/Terminal.astro';
+import nightFountain from '../assets/photos/seville-night-fountain.jpg';
+
+const lines = [
+  { cmd: true, text: 'whoami' },
+  { text: 'johnathan shirley // computer science @ texas a&m' },
+  { cmd: true, text: 'cat ./interests.txt' },
+  { text: 'machine learning · quantum computing · cross-country backpacking' },
+  { cmd: true, text: 'ls ./sitecontents' },
+  { text: 'about/   blog/   projects/' },
+];
+
+const nodes = [
+  { href: '/about/', code: '01', title: 'About', text: 'School, studies, interests, and the life outside the terminal.', color: 'magenta' },
+  { href: '/blog/', code: '02', title: 'Blog', text: 'Personal essays, long-form and unfiltered.', color: 'cyan' },
+  { href: '/projects/', code: '03', title: 'Projects', text: 'Selected builds from GitHub, finished and in progress.', color: 'yellow' },
+];
+---
+
+<Base title="Home">
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true">
+      <Image src={nightFountain} alt="" widths={[640, 1024, 1500]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <p class="section-label">// signal online</p>
+        <h1 class="hero__name">
+          <span class="glitch neon" data-text="Johnathan">Johnathan</span><br />
+          <span class="glitch neon neon--cyan" data-text="Shirley">Shirley</span>
+        </h1>
+        <p class="hero__sub">
+          CS student at Texas A&amp;M building machine-learning models, optimizing data pipelines, chasing quantum computing, and writing
+          about all of it.
+        </p>
+        <div class="hero__cta">
+          <a class="btn" href="/projects/">View projects</a>
+          <a class="btn btn--magenta" href="/blog/">Read the blog</a>
+        </div>
+      </div>
+      <div class="hero__term">
+        <Terminal id="home" lines={lines} />
+      </div>
+    </div>
+  </section>
+
+  <section class="container hud" aria-label="Quick facts">
+    <dl class="hud__grid">
+      <div><dt>Location</dt><dd>College Station, TX</dd></div>
+      <div><dt>Current op</dt><dd>SWE Intern, AgriLife</dd></div>
+      <div><dt>Major</dt><dd>B.S. Computer Science</dd></div>
+      <div><dt>ETA</dt><dd>Dec 2028</dd></div>
+    </dl>
+  </section>
+
+  <section class="container nodes" aria-label="Sections">
+    {
+      nodes.map((n) => (
+        <a href={n.href} class:list={['node', 'panel', `node--${n.color}`]}>
+          <span class="node__code">{n.code}</span>
+          <h2 class="node__title">{n.title}</h2>
+          <p class="node__text">{n.text}</p>
+          <span class="node__go" aria-hidden="true">
+            enter →
+          </span>
+        </a>
+      ))
+    }
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 43, 214, 0.2);
+  }
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .hero__bg :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 55%;
+    filter: saturate(1.4) contrast(1.1) brightness(0.9);
+  }
+  .hero__bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(7, 5, 13, 0.94) 0%, rgba(7, 5, 13, 0.6) 50%, rgba(7, 5, 13, 0.2) 100%),
+      linear-gradient(0deg, var(--bg) 0%, transparent 35%);
+  }
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+    padding-block: clamp(56px, 12vw, 140px);
+  }
+  .hero__name {
+    font-size: clamp(2.6rem, 8vw, 5rem);
+    line-height: 1.02;
+    margin-bottom: 20px;
+  }
+  .hero__sub {
+    max-width: 46ch;
+    font-size: 1.15rem;
+    color: var(--text);
+    margin: 0 0 28px;
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .hud {
+    margin-top: 32px;
+  }
+  .hud__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0;
+    border: var(--border);
+    background: var(--bg-panel);
+  }
+  .hud__grid > div {
+    padding: 14px 18px;
+    border-right: var(--border);
+  }
+  .hud__grid > div:last-child {
+    border-right: 0;
+  }
+  .hud dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--neon-magenta);
+  }
+  .hud dd {
+    margin: 2px 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: #fff;
+  }
+  .nodes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .node {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--text);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    --accent: var(--neon-cyan);
+  }
+  .node--magenta { --accent: var(--neon-magenta); }
+  .node--yellow { --accent: var(--neon-yellow); }
+  .node::before {
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+  .node:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    text-shadow: none;
+    color: var(--text);
+  }
+  .node__code {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+  .node__title {
+    margin: 6px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .node__text {
+    flex: 1;
+    margin: 0 0 16px;
+    color: var(--text-muted);
+  }
+  .node__go {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  @media (max-width: 860px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+    }
+    .nodes {
+      grid-template-columns: 1fr;
+    }
+    .hud__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .hud__grid > div:nth-child(2) {
+      border-right: 0;
+    }
+    .hud__grid > div:nth-child(-n + 2) {
+      border-bottom: var(--border);
+    }
+  }
+</style>

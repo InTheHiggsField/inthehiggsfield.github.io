@@ -1,0 +1,75 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base title={post.data.title} description={post.data.description}>
+  <article class="container essay">
+    <header class="essay__header">
+      <a href="/blog/" class="essay__back">← all transmissions</a>
+      <h1 class="essay__title">{post.data.title}</h1>
+      <p class="essay__meta">
+        <time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toISOString().slice(0, 10)}</time>
+        {post.data.tags.map((t) => <span class="tag">{t}</span>)}
+      </p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .essay {
+    max-width: 760px;
+    padding-top: clamp(40px, 8vw, 80px);
+  }
+  .essay__back {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .essay__title {
+    margin-top: 16px;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+  }
+  .essay__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--neon-magenta);
+    margin-bottom: 40px;
+  }
+  .prose {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    max-width: 68ch;
+  }
+  .prose :global(h2) {
+    margin-top: 2em;
+    color: var(--neon-cyan);
+  }
+  .prose :global(blockquote) {
+    margin: 1.5em 0;
+    padding: 4px 20px;
+    border-left: 3px solid var(--neon-magenta);
+    color: var(--text-muted);
+  }
+  .prose :global(code) {
+    padding: 1px 6px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 3px;
+  }
+</style>

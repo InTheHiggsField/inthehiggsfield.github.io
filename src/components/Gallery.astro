@@ -1,0 +1,211 @@
+---
+/**
+ * Photo grid with a full-size viewer built on the native <dialog> element.
+ * Thumbnails and full-size versions are both optimized WebP from astro:assets.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+
+export interface Photo {
+  src: ImageMetadata;
+  alt: string;
+  caption: string;
+}
+
+interface Props {
+  photos: Photo[];
+}
+
+const { photos } = Astro.props;
+const items = await Promise.all(
+  photos.map(async (p) => ({ ...p, full: (await getImage({ src: p.src, width: 1500, format: 'webp' })).src })),
+);
+---
+
+<div class="gallery" data-gallery>
+  {
+    items.map((p, i) => (
+      <figure class="gallery__item">
+        <button type="button" class="gallery__btn" data-index={i} data-full={p.full} data-caption={p.caption} data-alt={p.alt} aria-label={`View larger: ${p.caption}`}>
+          <Image src={p.src} alt={p.alt} widths={[360, 560, 800]} sizes="(max-width: 960px) 50vw, 270px" class="gallery__img" />
+        </button>
+        <figcaption class="gallery__cap">
+          <span class="gallery__idx">{String(i + 1).padStart(2, '0')}</span> {p.caption}
+        </figcaption>
+      </figure>
+    ))
+  }
+  <dialog class="viewer" aria-label="Photo viewer">
+    <figure class="viewer__fig">
+      <img class="viewer__img" alt="" />
+      <figcaption class="viewer__cap"></figcaption>
+    </figure>
+    <div class="viewer__controls">
+      <button type="button" class="viewer__nav" data-step="-1" aria-label="Previous photo">‹ prev</button>
+      <button type="button" class="viewer__nav" data-close aria-label="Close viewer">close ✕</button>
+      <button type="button" class="viewer__nav" data-step="1" aria-label="Next photo">next ›</button>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  function initGallery(root: HTMLElement) {
+    if (root.dataset.ready) return;
+    root.dataset.ready = '1';
+    const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
+    const img = dialog.querySelector<HTMLImageElement>('.viewer__img')!;
+    const cap = dialog.querySelector<HTMLElement>('.viewer__cap')!;
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('.gallery__btn'));
+    let current = 0;
+    let opener: HTMLButtonElement | null = null;
+
+    const show = (i: number) => {
+      current = (i + buttons.length) % buttons.length;
+      const b = buttons[current];
+      img.src = b.dataset.full ?? '';
+      img.alt = b.dataset.alt ?? '';
+      cap.textContent = `${String(current + 1).padStart(2, '0')} / ${String(buttons.length).padStart(2, '0')}  ${b.dataset.caption ?? ''}`;
+    };
+
+    buttons.forEach((b, i) =>
+      b.addEventListener('click', () => {
+        opener = b;
+        show(i);
+        dialog.showModal();
+      }),
+    );
+    dialog.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => show(current + Number(b.dataset.step))),
+    );
+    dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+    // Click on the backdrop closes
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') show(current + 1);
+      if (e.key === 'ArrowLeft') show(current - 1);
+    });
+    dialog.addEventListener('close', () => opener?.focus());
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-gallery]').forEach(initGallery);
+  });
+</script>
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .gallery__item {
+    margin: 0;
+  }
+  .gallery__btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    background: none;
+    cursor: zoom-in;
+    overflow: hidden;
+    position: relative;
+  }
+  .gallery__btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgba(255, 43, 214, 0.28));
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .gallery__btn:hover::after,
+  .gallery__btn:focus-visible::after {
+    opacity: 1;
+  }
+  .gallery__btn:hover {
+    border-color: var(--neon-magenta);
+    box-shadow: 0 0 18px rgba(255, 43, 214, 0.3);
+  }
+  .gallery__btn :global(.gallery__img) {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    filter: saturate(0.9) contrast(1.05);
+    transition: transform 0.4s ease, filter 0.4s ease;
+  }
+  .gallery__btn:hover :global(.gallery__img) {
+    transform: scale(1.04);
+    filter: saturate(1.15) contrast(1.1);
+  }
+  .gallery__cap {
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .gallery__idx {
+    color: var(--neon-magenta);
+  }
+
+  .viewer {
+    max-width: min(94vw, 1100px);
+    max-height: 94vh;
+    padding: 0;
+    border: 1px solid var(--neon-cyan);
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
+  }
+  .viewer::backdrop {
+    background: rgba(3, 2, 8, 0.88);
+    backdrop-filter: blur(4px);
+  }
+  .viewer__fig {
+    margin: 0;
+  }
+  .viewer__img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(94vh - 110px);
+    margin: 0 auto;
+    object-fit: contain;
+  }
+  .viewer__cap {
+    padding: 10px 14px 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--neon-cyan);
+    white-space: pre-wrap;
+  }
+  .viewer__controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 14px 14px;
+  }
+  .viewer__nav {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    background: transparent;
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .viewer__nav:hover {
+    background: var(--neon-cyan);
+    color: #000;
+  }
+
+  @media (max-width: 960px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

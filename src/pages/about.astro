@@ -1,0 +1,391 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Gallery, { type Photo } from '../components/Gallery.astro';
+
+import portrait from '../assets/photos/granada-alhambra-portrait.jpg';
+import sevillePeace from '../assets/photos/seville-plaza-peace.jpg';
+import sevilleNight from '../assets/photos/seville-night-fountain.jpg';
+import sagrada from '../assets/photos/barcelona-sagrada-facade.jpg';
+import palatine from '../assets/photos/rome-palatine-ruins.jpg';
+import uffizi from '../assets/photos/florence-uffizi-tribuna.jpg';
+import pisa from '../assets/photos/pisa-cathedral-arch.jpg';
+import nice from '../assets/photos/nice-castle-hill.jpg';
+import eze from '../assets/photos/eze-sea-view.jpg';
+
+const photos: Photo[] = [
+  { src: sevillePeace, caption: 'Plaza de España, Seville', alt: 'Johnathan throwing a peace sign on a tiled bridge at Plaza de España in Seville' },
+  { src: sagrada, caption: 'Sagrada Família, Barcelona', alt: 'Johnathan standing in front of the Nativity façade of the Sagrada Família' },
+  { src: palatine, caption: 'The Roman Forum, Rome', alt: 'Ancient brick ruins beneath bare tree branches on a rainy day in Rome' },
+  { src: uffizi, caption: 'The Tribuna, Uffizi, Florence', alt: 'Octagonal gallery room with red walls, marble statues and an inlaid floor' },
+  { src: sevilleNight, caption: 'Seville after dark', alt: 'A violet-lit fountain framed by a dark arched colonnade at night' },
+  { src: pisa, caption: 'Pisa Cathedral', alt: 'Pisa Cathedral and the leaning tower framed by a stone arch' },
+  { src: nice, caption: 'Castle Hill, Nice', alt: 'Looking out over the orange rooftops of Nice from a hillside overlook' },
+  { src: eze, caption: 'Èze, above the Mediterranean', alt: 'Johnathan looking out to sea from a stone wall high above the coast' },
+];
+
+const idCard = [
+  { k: 'Name', v: 'Johnathan Shirley' },
+  { k: 'Base', v: 'College Station, TX' },
+  { k: 'School', v: 'Texas A&M University' },
+  { k: 'Major', v: 'B.S. Computer Science' },
+  { k: 'Class', v: 'Dec 2028' },
+  { k: 'Languages', v: 'English · Español · 中文' },
+];
+
+const timeline = [
+  { when: 'Teenage years', what: 'Dropped out of School, wasted many years of my life' },
+  { when: 'Age 22', what: 'While working retail. One closing shift changed everything.' },
+  { when: 'The following day', what: 'Paid to take the GED. Passed it within a couple of months of self studying.' },
+  { when: 'Dec 2025', what: 'A.S. in Computer Science, Lee College. 3.95 GPA, summa cum laude.' },
+  { when: 'Jan 2026', what: 'Transferred to Texas A&M. Now a Software engineering intern at AgriLife.' },
+  { when: 'Dec 2028', what: 'B.S. in Computer Science, expected.', future: true },
+];
+
+const now = [
+  { tag: 'Work', text: 'Software engineering intern at AgriLife, leading a 4-person team building a 10 m crop map of the continental U.S. from satellite imagery.' },
+  { tag: 'Club', text: 'Secretary of Quant A&M, the quantum computing club. I run the website and write the weekly newsletter.' },
+  { tag: 'Project', text: 'Modeling consumer travel markets on an American Airlines-sponsored team project.' },
+  { tag: 'Side quest', text: 'Forecasting in-game market prices from a live REST API with Python and Pandas.' },
+];
+
+const skills = ['Python', 'C++', 'R', 'SQL', 'JavaScript / React', 'Pandas', 'Machine learning', 'Satellite imagery', 'Time-series forecasting', 'Git', 'REST APIs', 'GIS / ArcGIS'];
+---
+
+<Base title="About" description="About Johnathan Shirley: from middle school dropout to Texas A&M computer science, plus backpacking, languages, and code.">
+  <PageHeader eyebrow="01 // identity" title="About">
+    <p>Goal-oriented, self-taught the hard way, and always chasing the next challenge.</p>
+  </PageHeader>
+
+  <!-- Profile -->
+  <section class="container profile">
+    <aside class="idcard panel" aria-label="Profile">
+      <div class="idcard__photo">
+        <Image src={portrait} alt="Johnathan smiling on a balcony overlooking the Alhambra gardens in Granada" widths={[320, 480, 720]} sizes="(max-width: 860px) 80vw, 320px" />
+      </div>
+      <dl class="idcard__data">
+        {
+          idCard.map((r) => (
+            <div>
+              <dt>{r.k}</dt>
+              <dd>{r.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <div class="idcard__links">
+        <a class="btn" href="/Johnathan_Shirley_Resume.pdf">Resume (PDF)</a>
+        <a class="btn btn--magenta" href="https://github.com/InTheHiggsField" rel="me noopener">GitHub</a>
+      </div>
+    </aside>
+
+    <div class="profile__text prose">
+      <p class="section-label">who i am</p>
+      <p class="lead">
+        Whether it's a new programming language or a new spoken language, I'm always looking for the next challenge. If I had to describe
+        myself in a few words, I'd say <strong>goal-oriented</strong>. If there's something I want to do, I do it.
+      </p>
+      <p>
+        I learned the hard way that sitting around waiting for someone to save me is no way to live. You have to be willing to lift
+        yourself up first before anyone else will recognize what makes you special.
+      </p>
+
+      <p class="section-label section-label--spaced">currently</p>
+      <ul class="now">
+        {
+          now.map((n) => (
+            <li>
+              <span class="tag">{n.tag}</span>
+              <span>{n.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="section-label section-label--spaced">toolkit</p>
+      <ul class="skills">
+        {skills.map((s) => <li class="tag tag--magenta">{s}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="container story" aria-labelledby="story-title">
+    <p class="section-label">origin story</p>
+    <h2 id="story-title"><span class="neon neon--cyan">My story</span></h2>
+
+    <div class="story__grid">
+      <div class="prose story__text">
+        <p>
+          There's more I could say, but some things are best kept off the internet. What I will share is what inspired me to go back to
+          school. Many of my classmates have heard this story over the years, and I'm telling it here for whoever it might inspire.
+        </p>
+        <p class="dropcap">
+          I, Johnathan Shirley, am a middle school dropout. I never finished the 8th grade. I have no one to blame but myself; I had a
+          hard-working mother who loved me no matter what. The main reason was an obsession with video games and the instant
+          gratification they gave me. I let gaming take over my life at a young age, and it ruined me.
+        </p>
+        <p>
+          Through my teens and early twenties, I held on to a delusion: that making something of myself would be easy, that hard work
+          might not be necessary, that I could do whatever I wanted and opportunity and prosperity would simply come to me.
+        </p>
+        <p>
+          That delusion met reality when I was 22. I had been working retail for a few months, and once I settled in, I looked around at
+          my co-workers. Many were in their 40s or older, working jobs that led nowhere. It made me ask myself, <em
+            >"That couldn't possibly be where I end up… could it?"</em
+          >
+        </p>
+        <p>
+          It all came to a head on a closing shift with a sweet older woman I worked with. She was in her 70s and still working so that
+          she and her husband could keep their health insurance. I had grown close to her, and I felt for her struggle, one that so many
+          Americans share. What I didn't expect was for that closing shift to be her last. We closed up the store together and went home,
+          and she passed away that night.
+        </p>
+        <blockquote class="pull">
+          With the way my life was going, I shouldn't expect any more from this world than what it gave to her.
+        </blockquote>
+        <p>
+          That is what she made me realize. I knew I needed to do something. The very next day, I paid to take the GED. Within a couple of
+          months I had my GED, had taken my placement exams, and was enrolled at my local community college. I earned a 3.95 GPA at Lee
+          College, was accepted to Texas A&amp;M, and made my way to Aggieland, my second home.
+        </p>
+      </div>
+
+      <ol class="timeline" aria-label="Timeline">
+        {
+          timeline.map((t) => (
+            <li class:list={['timeline__item', { 'timeline__item--future': t.future }]}>
+              <span class="timeline__when">{t.when}</span>
+              <span class="timeline__what">{t.what}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Travel -->
+  <section class="container travel" aria-labelledby="travel-title">
+    <p class="section-label">off the clock</p>
+    <h2 id="travel-title"><span class="neon">Backpacking</span></h2>
+    <div class="prose travel__text">
+      <p>
+        Over these past few years of studying, I've picked up a hobby of cross-country backpacking. It has taken me through some gorgeous
+        countries, including Spain, Italy, and Greece, and every trip doubles as a chance to practice my foreign language skills. I've
+        spent some nights in hostels across Spain grinding LeetCode problems, because no matter where I go, my love for coding and
+        solving problems comes with me.
+      </p>
+    </div>
+    <Gallery photos={photos} />
+  </section>
+</Base>
+
+<style>
+  /* ---------- Profile ---------- */
+  .profile {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: clamp(28px, 5vw, 56px);
+    align-items: start;
+  }
+  .idcard {
+    position: sticky;
+    top: 84px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .idcard__photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 32% 30%;
+    border-bottom: 1px solid var(--neon-magenta);
+  }
+  .idcard__data {
+    margin: 0;
+    padding: 16px 20px 4px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .idcard__data > div {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px dashed rgba(0, 240, 255, 0.15);
+  }
+  .idcard__data dt {
+    color: var(--neon-magenta);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.72rem;
+    padding-top: 2px;
+  }
+  .idcard__data dd {
+    margin: 0;
+    color: #fff;
+  }
+  .idcard__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 20px 20px;
+  }
+  .idcard__links .btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .prose {
+    max-width: 68ch;
+    font-size: 1.0625rem;
+    line-height: 1.8;
+  }
+  .prose p {
+    margin: 0 0 1.1em;
+  }
+  .lead {
+    font-size: 1.2rem;
+    color: #fff;
+  }
+  .prose .section-label--spaced {
+    margin-top: 40px;
+  }
+  .now {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .now li {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: 14px;
+    align-items: baseline;
+    color: var(--text-muted);
+  }
+  .now .tag {
+    justify-self: start;
+  }
+  .skills {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ---------- Story ---------- */
+  .story,
+  .travel {
+    margin-top: clamp(64px, 10vw, 112px);
+  }
+  .story__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+    margin-top: 24px;
+  }
+  .story__text {
+    font-size: 1.125rem;
+  }
+  .dropcap::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-size: 3.6em;
+    line-height: 0.85;
+    padding: 6px 10px 0 0;
+    color: var(--neon-magenta);
+    text-shadow: var(--glow-magenta);
+  }
+  .pull {
+    margin: 1.8em 0;
+    padding: 18px 0 18px 24px;
+    border-left: 3px solid var(--neon-cyan);
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.6vw, 1.45rem);
+    line-height: 1.45;
+    color: #eafeff;
+    text-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
+  }
+
+  .timeline {
+    position: sticky;
+    top: 84px;
+    list-style: none;
+    margin: 0;
+    padding: 4px 0 4px 26px;
+    border-left: 2px solid rgba(255, 43, 214, 0.35);
+  }
+  .timeline__item {
+    position: relative;
+    padding-bottom: 22px;
+    display: grid;
+    gap: 2px;
+  }
+  .timeline__item::before {
+    content: '';
+    position: absolute;
+    left: -33px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    background: var(--bg);
+    border: 2px solid var(--neon-magenta);
+    box-shadow: 0 0 10px rgba(255, 43, 214, 0.7);
+    transform: rotate(45deg);
+  }
+  .timeline__item--future::before {
+    border-color: var(--neon-cyan);
+    border-style: dashed;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+  }
+  .timeline__when {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--neon-magenta);
+  }
+  .timeline__item--future .timeline__when {
+    color: var(--neon-cyan);
+  }
+  .timeline__what {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  /* ---------- Travel ---------- */
+  .travel__text {
+    margin: 16px 0 28px;
+  }
+
+  @media (max-width: 960px) {
+    .story__grid {
+      grid-template-columns: 1fr;
+    }
+    .timeline {
+      position: static;
+      order: -1;
+    }
+  }
+  @media (max-width: 860px) {
+    .profile {
+      grid-template-columns: 1fr;
+    }
+    .idcard {
+      position: static;
+      max-width: 420px;
+    }
+  }
+  @media (max-width: 480px) {
+    .now li {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>

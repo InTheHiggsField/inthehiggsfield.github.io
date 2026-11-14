@@ -1,0 +1,149 @@
+---
+/**
+ * A terminal window that "types" its lines once per visit.
+ * The full text is in the HTML, so it reads fine without JavaScript,
+ * for screen readers, and for anyone who prefers reduced motion.
+ */
+export interface Line {
+  /** Command lines get a prompt; output lines do not. */
+  cmd?: boolean;
+  text: string;
+}
+
+interface Props {
+  title?: string;
+  lines: Line[];
+  id: string;
+}
+
+const { title = 'jshirley@nightcity: ~', lines, id } = Astro.props;
+---
+
+<div class="term" data-terminal={id}>
+  <div class="term__bar" aria-hidden="true">
+    <span class="term__dot"></span><span class="term__dot"></span><span class="term__dot"></span>
+    <span class="term__title">{title}</span>
+  </div>
+  <pre class="term__body"><code>{
+    lines.map((l) => (
+      <span class:list={['term__line', { 'term__line--cmd': l.cmd }]} data-text={l.text}>{l.cmd && <span class="term__prompt" aria-hidden="true">$ </span>}<span class="term__text">{l.text}</span>{'\n'}</span>
+    ))
+  }<span class="term__cursor" aria-hidden="true">█</span></code></pre>
+</div>
+
+<script>
+  const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function seen(id: string): boolean {
+    try {
+      return sessionStorage.getItem(`term:${id}`) === '1';
+    } catch {
+      return false;
+    }
+  }
+  function markSeen(id: string) {
+    try {
+      sessionStorage.setItem(`term:${id}`, '1');
+    } catch {
+      /* storage unavailable: just replay next time */
+    }
+  }
+
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  async function play(el: HTMLElement) {
+    const id = el.dataset.terminal ?? '';
+    if (el.dataset.played || reduced() || seen(id)) return;
+    el.dataset.played = '1';
+    markSeen(id);
+
+    const lines = Array.from(el.querySelectorAll<HTMLElement>('.term__line'));
+    lines.forEach((l) => l.classList.add('is-hidden'));
+
+    for (const line of lines) {
+      if (!el.isConnected) return; // user navigated away
+      const textEl = line.querySelector<HTMLElement>('.term__text');
+      const full = line.dataset.text ?? '';
+      if (!textEl) continue;
+      textEl.textContent = '';
+      line.classList.remove('is-hidden');
+      if (line.classList.contains('term__line--cmd')) {
+        for (const ch of full) {
+          textEl.textContent += ch;
+          await sleep(28 + Math.random() * 40);
+        }
+        await sleep(220);
+      } else {
+        textEl.textContent = full;
+        await sleep(90);
+      }
+    }
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-terminal]').forEach(play);
+  });
+</script>
+
+<style>
+  .term {
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    background: rgba(5, 3, 10, 0.88);
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px rgba(255, 43, 214, 0.08), 0 20px 60px rgba(0, 0, 0, 0.55),
+      0 0 40px rgba(0, 240, 255, 0.08);
+    overflow: hidden;
+  }
+  .term__bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+  }
+  .term__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--neon-magenta);
+    opacity: 0.85;
+  }
+  .term__dot:nth-child(2) { background: var(--neon-yellow); }
+  .term__dot:nth-child(3) { background: var(--neon-green); }
+  .term__title {
+    margin-left: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .term__body {
+    margin: 0;
+    padding: 16px 18px 18px;
+    font-size: clamp(0.8rem, 2.4vw, 0.95rem);
+    line-height: 1.7;
+    color: var(--neon-green);
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 3em;
+  }
+  .term__line--cmd {
+    color: #fff;
+  }
+  .term__prompt {
+    color: var(--neon-magenta);
+  }
+  .term__line.is-hidden {
+    display: none;
+  }
+  .term__cursor {
+    color: var(--neon-cyan);
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+</style>

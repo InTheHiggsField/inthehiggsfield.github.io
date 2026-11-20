@@ -35,6 +35,31 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    name: 'League_Data_App',
+    summary: 'A personal draft helper for League of Legends solo queue, built on live game data.',
+    details: [
+      'Pulls champion and game data from the Riot Games APIs through a small Python client.',
+      'Stores the data in a local database and computes champion stats to guide picks during draft.',
+      'Built for my own use: I run it whenever I queue up for ranked solo games.',
+    ],
+    tech: ['Python', 'REST API', 'Riot Games API'],
+    status: 'wip',
+    repo: 'https://github.com/InTheHiggsField/League_Data_App',
+  },
+  {
+    name: 'QuantA&M Website',
+    summary: "I manage and update the website for QuantA&M, Texas A&M's quantum computing club.",
+    details: [
+      'Maintain the club site: home, about, event calendar, officer profiles, and the newsletter archive.',
+      'Recent work improved how the site functions and changed how newsletters are published and delivered to members.',
+      'Added an animated, interactive Bloch sphere to show how a single qubit state is pictured.',
+    ],
+    tech: ['React', 'JavaScript', 'CSS', 'GitHub Pages'],
+    status: 'live',
+    repo: 'https://github.com/quantamu/quantamu.github.io',
+    demo: 'https://quantamu.github.io',
+  },
+  {
     name: 'inthehiggsfield.github.io',
     summary: "This site: a cyberpunk-themed portfolio and blog.",
     details: [
